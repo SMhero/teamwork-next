@@ -1,0 +1,6 @@
+{
+  "arrowParens": "avoid",
+  "trailingComma": "es5",
+  "printWidth": 120,
+  "quoteProps": "as-needed"
+}
