@@ -1,10 +1,12 @@
-import Image from "next/image";
+import LoginForm from "@/components/forms/LoginForm";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      Main
-      <Image src="/next.svg" alt="Vercel Logo" className="dark:invert" width={100} height={24} priority />
-    </main>
+    <section className="flex items-center justify-center h-full">
+      <div className="flex-1 max-w-sm">
+        <h1 className="text-4xl text-center mb-6">Teamwork - Die hard!</h1>
+        <LoginForm />
+      </div>
+    </section>
   );
 }
