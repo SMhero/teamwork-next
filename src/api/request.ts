@@ -1,54 +1,60 @@
-export interface RequestPayload extends RequestInit {
-  params?: Record<string, string>;
-  queries?: Record<string, string>;
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+
+export interface RequestConfig<D = Record<string, unknown>> extends AxiosRequestConfig<D> {
+  paths?: Record<string, number | string>;
 }
 
-const isEmptyPayload = (payload: RequestPayload["queries"] | RequestPayload["params"]) =>
-  !(payload && Object.keys(payload).length);
+const instance = axios.create({
+  baseURL: "https://jsonplaceholder.typicode.com",
+  timeout: 30000,
+  timeoutErrorMessage: "The request is time out...",
+});
 
-const getUrlWithQueries = (url: string, queries: RequestPayload["queries"] = {}) => {
-  if (isEmptyPayload(queries)) {
+axios.interceptors.response.use(
+  result => result,
+  (error: AxiosError) => {
+    const { data, status } = error.response!;
+
+    switch (status) {
+      case 400:
+        console.error(data);
+        break;
+
+      case 401:
+        console.error("Unauthorised");
+        break;
+
+      case 404:
+        console.error("Not Found");
+        break;
+
+      case 500:
+        console.error("Server Error");
+        break;
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+const getUrlWithPath = (url: string, paths: RequestConfig["paths"]) => {
+  if (paths) {
+    Object.keys(paths).forEach(key => {
+      url = url.replace(`{{${key}}}`, String(paths[key]));
+    });
     return url;
   }
 
-  const search = new URLSearchParams(queries).toString();
-  return `${url}?${decodeURIComponent(search)}`;
-};
-
-const getUrlWithParams = (url: string, params: RequestPayload["params"] = {}) => {
-  if (isEmptyPayload(params)) {
-    return url;
-  }
-
-  Object.keys(params).forEach(key => (url = url.replace(`{{${key}}}`, params[key])));
   return url;
 };
 
-const request = async <T>(url: string, options: RequestInit = {}): Promise<T> => {
-  const response = await fetch(url, options);
-
-  try {
-    const data = await response.text();
-    return data ? JSON.parse(data) : {};
-  } catch (err) {
-    throw new Error(err as string);
-  }
+export const get = async <R, D>(url: string, { paths, ...config }: RequestConfig<D>): Promise<AxiosResponse<R>> => {
+  return await instance.get<R>(getUrlWithPath(url, paths), config);
 };
 
-export const get = <T>(url: string, payload?: RequestPayload): Promise<T> => {
-  if (payload?.queries) {
-    url = getUrlWithQueries(url, payload?.queries);
-  }
-
-  return request<T>(getUrlWithParams(url, payload?.params), payload);
+export const post = async <R, D>(
+  url: string,
+  { data, paths, ...config }: RequestConfig<D>
+): Promise<AxiosResponse<R>> => {
+  return await instance.post<R>(getUrlWithPath(url, paths), { data }, config);
 };
-
-export const post = <T>(url: string, payload: RequestPayload): Promise<T> =>
-  request(getUrlWithParams(url, payload.params), {
-    body: JSON.stringify(payload.body),
-    headers: {
-      "Content-Type": "application/json",
-      ...payload.headers,
-    },
-    method: "POST",
-  });
