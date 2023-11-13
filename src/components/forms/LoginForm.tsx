@@ -1,13 +1,12 @@
 "use client";
-
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, Input } from "@nextui-org/react";
+import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
-import { z } from "zod";
-import { useState } from "react";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
