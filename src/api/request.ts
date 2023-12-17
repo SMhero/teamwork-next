@@ -5,7 +5,7 @@ export interface RequestConfig<D = Record<string, unknown>> extends AxiosRequest
 }
 
 const instance = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
+  baseURL: "https://inteam.work",
   timeout: 30000,
   timeoutErrorMessage: "The request is time out...",
 });
@@ -48,7 +48,7 @@ const getUrlWithPath = (url: string, paths: RequestConfig["paths"]) => {
   return url;
 };
 
-export const get = async <R, D>(url: string, { paths, ...config }: RequestConfig<D>): Promise<AxiosResponse<R>> => {
+export const get = async <R, D>(url: string, { paths, ...config }: RequestConfig<D>): Promise<AxiosResponse<R, D>> => {
   return await instance.get<R>(getUrlWithPath(url, paths), config);
 };
 
@@ -56,5 +56,5 @@ export const post = async <R, D>(
   url: string,
   { data, paths, ...config }: RequestConfig<D>
 ): Promise<AxiosResponse<R>> => {
-  return await instance.post<R>(getUrlWithPath(url, paths), { data }, config);
+  return await instance.post<R>(getUrlWithPath(url, paths), data, config);
 };
