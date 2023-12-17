@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,6 +8,8 @@ import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
+import { post } from "@/api/request";
+import { endpoints } from "@/config/app";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
@@ -29,7 +32,14 @@ export default function LoginForm() {
   });
 
   const onSubmit = handleSubmit((values, event) => {
-    console.log(values, event);
+    post(endpoints.login, {
+      data: {
+        username: values.email,
+        password: values.password,
+      },
+    })
+      .then(response => console.warn(response))
+      .catch(error => console.error(error));
   });
 
   return (
@@ -41,7 +51,7 @@ export default function LoginForm() {
       noValidate
     >
       <Input
-        {...(register("email"), { required: true })}
+        {...register("email")}
         errorMessage={errors.password?.message && errors.email?.message}
         onFocus={() => clearErrors()}
         isInvalid={!!errors.email?.message}
@@ -50,9 +60,10 @@ export default function LoginForm() {
         endContent={<EmailIcon className="text-xl text-default-400 pointer-events-none flex-shrink-0" />}
         placeholder="email@example.com"
         type="email"
+        required
       />
       <Input
-        {...(register("password"), { required: true })}
+        {...register("password")}
         errorMessage={errors.password?.message && errors.password?.message}
         onFocus={() => clearErrors()}
         isInvalid={!!errors.password?.message}
@@ -65,6 +76,7 @@ export default function LoginForm() {
         }
         placeholder="Your tricky password"
         type={isVisible ? "text" : "password"}
+        required
       />
       <Button className="w-full" color="primary" size="lg" type="submit" isDisabled={!isValid}>
         Log in
