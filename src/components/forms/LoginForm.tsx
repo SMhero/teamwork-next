@@ -8,8 +8,9 @@ import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
-import { post } from "@/api/request";
-import { endpoints } from "@/config/app";
+import { post } from "@/services/request";
+import { endpoints, routes } from "@/config/app";
+import { redirect } from "next/navigation";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
@@ -31,15 +32,17 @@ export default function LoginForm() {
     resolver: zodResolver(FormSchema),
   });
 
-  const onSubmit = handleSubmit((values, event) => {
-    post(endpoints.login, {
-      data: {
+  const onSubmit = handleSubmit(async values => {
+    try {
+      await post(endpoints.login, {
         username: values.email,
         password: values.password,
-      },
-    })
-      .then(response => console.warn(response))
-      .catch(error => console.error(error));
+      });
+
+      redirect(routes.team);
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   return (
