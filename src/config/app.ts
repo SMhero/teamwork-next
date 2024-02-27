@@ -7,5 +7,5 @@ export const routes = {
 
 export const endpoints = {
   login: "/v2/login/",
-  profile: "/v2/myteam/profile",
+  profile: "/v2/myteam/profile/",
 };

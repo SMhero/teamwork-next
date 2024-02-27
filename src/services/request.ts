@@ -1,63 +1,56 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-
-export interface RequestConfig<D = Record<string, unknown>> extends AxiosRequestConfig<D> {}
-
-const api = axios.create({
-  baseURL: "https://inteam.work",
-  timeout: 30000,
-  timeoutErrorMessage: "The request is timed out...",
-  withCredentials: true,
-});
-
-api.interceptors.response.use(
-  response => response,
-  (error: AxiosError) => {
-    const { data, status } = error.response!;
-
-    switch (status) {
-      case 400:
-        console.error(data);
-        break;
-
-      case 401:
-        console.error("Unauthorised");
-        break;
-
-      case 404:
-        console.error("Not Found");
-        break;
-
-      case 500:
-        console.error("Server Error");
-        break;
-
-      default:
-        console.error("An error occurred:", error);
-    }
-
-    return Promise.reject(error);
-  }
-);
-
-const getUrlWithPath = (url: string, paths: Record<string, number | string> = {}) => {
-  if (paths) {
-    Object.keys(paths).forEach(key => {
-      url = url.replace(`{{${key}}}`, String(paths[key]));
-    });
-  }
-
-  return url;
+export type RequestPayload = {
+  body?: RequestInit["body"];
+  headers?: RequestInit["headers"];
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  params?: Record<string, unknown>;
+  queries?: Record<string, string>;
 };
 
-export const get = async <R, D>(
-  url: string,
-  config?: RequestConfig<D>,
-  paths?: Record<string, number | string>
-): Promise<AxiosResponse<R, D>> => await api.get<R>(getUrlWithPath(url, paths), config);
+const BASE_URL = "http://localhost:8000";
 
-export const post = async <R, D>(
-  url: string,
-  data: D,
-  config?: RequestConfig<D>,
-  paths?: Record<string, number | string>
-): Promise<AxiosResponse<R>> => await api.post<R>(getUrlWithPath(url, paths), data, config);
+const getUrlWithQueries = (url: string, queries: RequestPayload["queries"] = {}) => {
+  const search = new URLSearchParams(queries).toString();
+  return `${url}?${decodeURIComponent(search)}`;
+};
+
+const getUrlWithParams = (url: string, params: RequestPayload["params"] = {}) => {
+  const newUrl = url;
+
+  Object.keys(params).forEach(key => (url = url.replace(`{{${key}}}`, String(params[key]))));
+  return newUrl;
+};
+
+export const request = async <T>(url: string, payload: RequestPayload): Promise<T> => {
+  if (payload.params) {
+    url = getUrlWithParams(url, payload.params);
+  }
+
+  if (payload.queries) {
+    url = getUrlWithQueries(url, payload.queries);
+  }
+
+  try {
+    if (payload.method === "POST" || payload.method === "PUT") {
+      payload.headers = {
+        ...payload.headers,
+        "Content-Type": "application/json",
+      };
+    }
+
+    const options = {
+      ...payload,
+      headers: { ...payload.headers, "Set-Cookie": "application/json" },
+    };
+
+    const response = url.startsWith("/") ? await fetch(`${BASE_URL}${url}`, options) : await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    const data: T = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch error: ${(error as Error).message}`);
+  }
+};
