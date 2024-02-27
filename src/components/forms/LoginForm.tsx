@@ -4,22 +4,24 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, Input } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
-import { post } from "@/services/request";
+import { request } from "@/services/request";
 import { endpoints, routes } from "@/config/app";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
-  password: z.string().min(8, { message: "Field has at least 8 characters" }),
+  password: z.string().min(3, { message: "Field has at least 3 characters" }),
 });
 
 type FormData = z.infer<typeof FormSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
 
   const {
@@ -34,12 +36,16 @@ export default function LoginForm() {
 
   const onSubmit = handleSubmit(async values => {
     try {
-      await post(endpoints.login, {
-        username: values.email,
-        password: values.password,
+      await request(endpoints.login, {
+        body: JSON.stringify({
+          username: values.email,
+          password: values.password,
+        }),
+        method: "POST",
       });
 
-      redirect(routes.team);
+      // redirect(routes.team);
+      router.push(routes.team);
     } catch (error) {
       console.error(error);
     }

@@ -1,10 +1,8 @@
 import { endpoints } from "@/config/app";
-import { get } from "@/services/request";
+import { request } from "@/services/request";
 
 export async function getProfile() {
-  const data = get(endpoints.profile)
-    .then(response => console.warn(response.data))
-    .catch(error => console.error(error));
+  const data = request(endpoints.profile, { method: "GET" });
 
   return {
     props: {
