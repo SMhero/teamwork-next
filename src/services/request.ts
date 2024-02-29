@@ -1,7 +1,7 @@
 export type RequestPayload = {
   body?: RequestInit["body"];
   headers?: RequestInit["headers"];
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   params?: Record<string, unknown>;
   queries?: Record<string, string>;
 };
@@ -20,7 +20,7 @@ const getUrlWithParams = (url: string, params: RequestPayload["params"] = {}) =>
   return newUrl;
 };
 
-export const request = async <T>(url: string, payload: RequestPayload): Promise<T> => {
+export const request = async <T>(url: string, payload: RequestPayload = {}): Promise<T> => {
   if (payload.params) {
     url = getUrlWithParams(url, payload.params);
   }
@@ -30,16 +30,14 @@ export const request = async <T>(url: string, payload: RequestPayload): Promise<
   }
 
   try {
-    if (payload.method === "POST" || payload.method === "PUT") {
-      payload.headers = {
-        ...payload.headers,
-        "Content-Type": "application/json",
-      };
-    }
-
     const options = {
       ...payload,
-      headers: { ...payload.headers, "Set-Cookie": "application/json" },
+      credentials: "include" as RequestInit["credentials"],
+      headers: {
+        ...payload.headers,
+        "Content-Type": "application/json",
+        "Set-Cookie": "application/json",
+      },
     };
 
     const response = url.startsWith("/") ? await fetch(`${BASE_URL}${url}`, options) : await fetch(url, options);

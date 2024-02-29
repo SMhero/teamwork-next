@@ -10,5 +10,3 @@ export default function Home() {
     </section>
   );
 }
-
-// ph/zY775*o^|

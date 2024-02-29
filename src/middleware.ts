@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 
 import { routes } from "@/config/app";
 
@@ -10,6 +11,11 @@ const PUBLIC_ROUTES = [routes.main, routes.about, routes.login];
 
 export function middleware(request: NextRequest) {
   const sessionId = request.cookies.get(SESSION_ID)?.value;
+
+  // const requestHeaders = new Headers(request.headers);
+
+  // requestHeaders.set("credentials", "include");
+  // requestHeaders.set("Access-Control-Allow-Credentials", "true");
 
   if (PROTECTED_ROUTES.includes(request.nextUrl.pathname) && !sessionId) {
     const response = NextResponse.redirect(new URL(routes.main, request.url));

@@ -9,9 +9,8 @@ import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
-import { request } from "@/services/request";
-import { endpoints, routes } from "@/config/app";
-// import { redirect } from "next/navigation";
+import { routes } from "@/config/app";
+import { login } from "@/services/login";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
@@ -36,16 +35,9 @@ export default function LoginForm() {
 
   const onSubmit = handleSubmit(async values => {
     try {
-      await request(endpoints.login, {
-        body: JSON.stringify({
-          username: values.email,
-          password: values.password,
-        }),
-        method: "POST",
-      });
+      await login({ email: values.email, password: values.password });
 
-      // redirect(routes.team);
-      router.push(routes.team);
+      router.replace(routes.team);
     } catch (error) {
       console.error(error);
     }
