@@ -2,7 +2,7 @@ import { endpoints } from "@/config/app";
 import { request } from "@/services/request";
 
 export async function getProfile() {
-  const data = request(endpoints.profile, { method: "GET" });
+  const data = await request(endpoints.profile);
 
   return {
     props: {
