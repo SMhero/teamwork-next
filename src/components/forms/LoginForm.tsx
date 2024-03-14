@@ -10,7 +10,7 @@ import { z } from "zod";
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
 import { routes } from "@/config/app";
-import { login } from "@/services/login";
+import { login } from "@/actions/login";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),

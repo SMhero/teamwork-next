@@ -4,6 +4,7 @@ import ThemeProvider from "@/components/Theme";
 import Header from "@/components/Header/Header";
 
 import "./globals.css";
+import { ZustandProvider } from "@/components/providers/ZustandProvider";
 
 type Props = { children: React.ReactNode };
 
@@ -24,10 +25,12 @@ export default function RootLayout({ children }: Props) {
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider>
-          <main className="bg-background h-screen w-full flex flex-col overflow-x-auto relative">
-            <Header />
-            {children}
-          </main>
+          <ZustandProvider>
+            <main className="bg-background h-screen w-full flex flex-col overflow-x-auto relative">
+              <Header />
+              {children}
+            </main>
+          </ZustandProvider>
         </ThemeProvider>
       </body>
     </html>

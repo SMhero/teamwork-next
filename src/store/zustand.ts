@@ -1,10 +1,7 @@
 import { StateCreator } from "zustand";
-import { DevtoolsOptions, devtools } from "zustand/middleware";
-import { immer } from "zustand/middleware/immer";
+import { PersistOptions, devtools, persist } from "zustand/middleware";
 
-const middlewares = <T>(
-  storeFn: StateCreator<T, [["zustand/devtools", never], ["zustand/immer", T]]>,
-  options: DevtoolsOptions
-) => devtools(immer(storeFn), { ...options, enabled: true });
+const middlewares = <T>(storeFn: StateCreator<T, [["zustand/devtools", never]]>, options: PersistOptions<T, T>) =>
+  devtools(persist(storeFn, options), { enabled: true });
 
 export default middlewares;
