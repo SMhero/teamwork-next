@@ -15,10 +15,10 @@ export type Profile = {
   };
 };
 
-type State = {
+export type State = {
   profile: Profile | null;
-  remove: () => void;
-  update: (newProfile: Profile) => void;
+  removeProfile: () => void;
+  setProfile: (newProfile: Profile) => void;
 };
 
 export const useProfileStore = create<State>()(
@@ -26,13 +26,12 @@ export const useProfileStore = create<State>()(
     set => ({
       profile: null,
 
-      update: (newProfile: Profile) =>
-        set(state => {
-          state.profile = newProfile;
-          return state;
-        }),
+      setProfile: (newProfile: Profile) =>
+        set(() => ({
+          profile: newProfile,
+        })),
 
-      remove: () =>
+      removeProfile: () =>
         set(state => {
           state.profile = null;
           return state;
@@ -40,6 +39,7 @@ export const useProfileStore = create<State>()(
     }),
     {
       name: "profile-store",
+      skipHydration: true,
     }
   )
 );

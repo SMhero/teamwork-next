@@ -1,6 +1,8 @@
 export type RequestPayload = {
   body?: RequestInit["body"];
-  headers?: RequestInit["headers"];
+  headers?: {
+    [key: string]: string;
+  };
   method?: "GET" | "POST" | "PUT" | "DELETE";
   params?: Record<string, unknown>;
   queries?: Record<string, string>;
@@ -33,11 +35,12 @@ export const request = async <T>(url: string, payload: RequestPayload = {}): Pro
     const options = {
       ...payload,
       credentials: "include" as RequestInit["credentials"],
-      headers: {
-        ...payload.headers,
-        "Content-Type": "application/json",
-        "Set-Cookie": "application/json",
-      },
+      headers: JSON.parse(
+        JSON.stringify({
+          ...payload.headers,
+          "Content-Type": "application/json",
+        })
+      ),
     };
 
     const response = url.startsWith("/") ? await fetch(`${BASE_URL}${url}`, options) : await fetch(url, options);
@@ -49,6 +52,6 @@ export const request = async <T>(url: string, payload: RequestPayload = {}): Pro
     const data: T = await response.json();
     return data;
   } catch (error) {
-    throw new Error(`Fetch error: ${(error as Error).message}`);
+    throw new Error(`Fetch error: ${(error as Error)?.message}`);
   }
 };
