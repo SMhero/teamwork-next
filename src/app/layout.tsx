@@ -25,12 +25,12 @@ export default function RootLayout({ children }: Props) {
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider>
-          <ZustandProvider>
-            <main className="bg-background h-screen w-full flex flex-col overflow-x-auto relative">
+          <main className="bg-background h-screen w-full flex flex-col overflow-x-auto relative">
+            <ZustandProvider>
               <Header />
               {children}
-            </main>
-          </ZustandProvider>
+            </ZustandProvider>
+          </main>
         </ThemeProvider>
       </body>
     </html>

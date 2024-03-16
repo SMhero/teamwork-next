@@ -13,7 +13,6 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { logout } from "@/actions/logout";
-import { useProfileStore } from "@/store/useProfileStore";
 import { useZustandStore } from "@/components/providers/ZustandProvider";
 
 export default function Header() {
