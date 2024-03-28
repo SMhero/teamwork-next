@@ -1,7 +1,5 @@
-import middlewares from "@/store/zustand";
-import { StateCreator, createStore } from "zustand/vanilla";
-import { createJSONStorage } from "zustand/middleware";
-import { ZustandStore } from "@/components/providers/ZustandProvider";
+import { StateCreator } from "zustand/vanilla";
+import { ZustandStore } from "@/components/Provider/ZustandProvider";
 
 type Meeting = {
   duration: number;

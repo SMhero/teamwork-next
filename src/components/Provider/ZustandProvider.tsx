@@ -3,13 +3,14 @@
 import { createContext, useContext, useRef } from "react";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { useStoreWithEqualityFn } from "zustand/traditional";
-
-import { type ProfileStore, createProfileStore } from "@/store/profile";
-import { type ScheduleStore, createScheduleStore } from "@/store/schedule";
-import middlewares from "@/store/zustand";
 import { createJSONStorage } from "zustand/middleware";
 
-export type ZustandStore = ProfileStore & ScheduleStore;
+import { type ProfileStore, createProfileStore } from "@/store/profile";
+import { createTeamStore, TeamStore } from "@/store/team";
+import { type ScheduleStore, createScheduleStore } from "@/store/schedule";
+import middlewares from "@/store/zustand";
+
+export type ZustandStore = ProfileStore & TeamStore & ScheduleStore;
 
 const ZustandContext = createContext<StoreApi<ZustandStore> | null>(null);
 
@@ -21,11 +22,13 @@ export const ZustandProvider = ({ children }: { children: React.ReactNode }) => 
       middlewares(
         (...args) => ({
           ...createProfileStore(...args),
+          ...createTeamStore(...args),
           ...createScheduleStore(...args),
         }),
         {
           name: "zustand-store",
           storage: createJSONStorage(() => localStorage),
+          skipHydration: true,
         }
       )
     );

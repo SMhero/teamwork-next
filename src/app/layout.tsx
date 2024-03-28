@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Ubuntu } from "next/font/google";
+import { Quantico } from "next/font/google";
 import ThemeProvider from "@/components/Theme";
+import { ZustandProvider } from "@/components/Provider/ZustandProvider";
 import Header from "@/components/Header/Header";
 
 import "./globals.css";
-import { ZustandProvider } from "@/components/providers/ZustandProvider";
 
 type Props = { children: React.ReactNode };
 
-const inter = Ubuntu({
+const inter = Quantico({
   display: "swap",
-  style: ["normal", "italic"],
+  style: ["normal"],
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +28,9 @@ export default function RootLayout({ children }: Props) {
           <main className="bg-background h-screen w-full flex flex-col overflow-x-auto relative">
             <ZustandProvider>
               <Header />
-              {children}
+              <section className="flex min-h-screen flex-col items-center px-8 py-16 max-w-screen-desktop m-auto w-full">
+                {children}
+              </section>
             </ZustandProvider>
           </main>
         </ThemeProvider>

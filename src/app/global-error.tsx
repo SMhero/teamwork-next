@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@nextui-org/react";
 import { useEffect } from "react";
 
 type Props = {
@@ -15,9 +16,11 @@ export default function Error({ error, reset }: Props) {
   }, [error]);
 
   return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <button onClick={() => reset()}>Try again</button>
+    <div className="flex min-h-screen flex-col items-center p-24">
+      <h1>Something went wrong!</h1>
+      <Button onClick={() => reset()} className="mt-8" color="primary" size="lg">
+        Try again
+      </Button>
     </div>
   );
 }
