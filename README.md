@@ -12,9 +12,9 @@ Teamwork is an application to help team leaders guide team members to the right 
 ## Commands
 
 ```bash
+pnpm run dev # run development server
 pnpm run build # building the app for productions deploy
 pnpm run lint # linting of the app code
-pnpm run dev # run development server
 ```
 
 ## Before you start ⚠️
@@ -22,6 +22,8 @@ pnpm run dev # run development server
 The project use `pnpm` package manager. It's really fast and handy but you can use any package manager that you want, like, `npm` or `yarn`.
 
 Now, the project works only with mocked data. Based on that you should create a folder named `mock` in `src` directory and put two `JSON` files below;
+
+`user.json`:
 
 ```json
 {
@@ -38,6 +40,8 @@ Now, the project works only with mocked data. Based on that you should create a 
   "team": "World Wrestling Entertainment (WWE)"
 }
 ```
+
+`teammates.json`:
 
 ```json
 [
