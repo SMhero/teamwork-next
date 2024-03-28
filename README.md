@@ -25,8 +25,16 @@ Now, the project works only with mocked data. Based on that you should create a 
 
 ```json
 {
-  "user": { "email": "mcmahon@teamwork.com", "firstName": "Vince", "lastName": "McMahon" },
-  "teamlead": { "timezone": "America/USA", "photoUrl": "/mock/vince_mcmahon.png", "defaultMeetingDuration": 60 },
+  "user": {
+    "email": "mcmahon@teamwork.com",
+    "firstName": "Vince",
+    "lastName": "McMahon"
+  },
+  "teamlead": {
+    "timezone": "America/USA",
+    "photoUrl": "/mock/vince_mcmahon.png",
+    "defaultMeetingDuration": 60
+  },
   "team": "World Wrestling Entertainment (WWE)"
 }
 ```
