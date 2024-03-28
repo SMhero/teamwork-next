@@ -1,7 +1,5 @@
-import { ZustandStore } from "@/components/providers/ZustandProvider";
-import middlewares from "@/store/zustand";
-import { createJSONStorage } from "zustand/middleware";
-import { StateCreator, createStore } from "zustand/vanilla";
+import { ZustandStore } from "@/components/Provider/ZustandProvider";
+import { StateCreator } from "zustand/vanilla";
 
 export type Profile = {
   team: string;

@@ -5,12 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import cookies from "js-cookie";
 import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
 import { routes } from "@/config/app";
-import { login } from "@/actions/login";
+// import { login } from "@/actions/login";
+// import { useZustandStore } from "@/components/Provider/ZustandProvider";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
@@ -35,7 +37,14 @@ export default function LoginForm() {
 
   const onSubmit = handleSubmit(async values => {
     try {
-      await login({ email: values.email, password: values.password });
+      // @FIX: mocking
+      // await login({ email: values.email, password: values.password });
+      setTimeout(() => {
+        cookies.set("sessionid", crypto.randomUUID(), {
+          // @NOTE: expires after 24 hours
+          expires: new Date().getTime() + 60 * 60 * 24 * 1000,
+        });
+      }, 3000);
 
       router.replace(routes.team);
     } catch (error) {
@@ -45,7 +54,7 @@ export default function LoginForm() {
 
   return (
     <form
-      className="flex flex-col gap-6 justify-center"
+      className="flex flex-col justify-center gap-4"
       autoComplete="off"
       onFocus={() => clearErrors()}
       onSubmit={onSubmit}
