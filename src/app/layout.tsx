@@ -3,6 +3,7 @@ import { Quantico } from "next/font/google";
 import ThemeProvider from "@/components/Theme";
 import { ZustandProvider } from "@/components/Provider/ZustandProvider";
 import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
 import "./globals.css";
 
@@ -28,9 +29,10 @@ export default function RootLayout({ children }: Props) {
           <div className="bg-background h-screen w-full overflow-x-auto relative">
             <ZustandProvider>
               <Header />
-              <main className="px-6 py-12 h-[calc(100vh-65px)] max-w-screen-xl m-auto w-full box-border">
+              <main className="px-6 py-12 h-[calc(100vh-65px-56px)] max-w-screen-xl m-auto w-full box-border">
                 {children}
               </main>
+              <Footer />
             </ZustandProvider>
           </div>
         </ThemeProvider>

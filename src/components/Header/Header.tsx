@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import {
-  Avatar,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -13,12 +12,18 @@ import {
   NavbarItem,
   User,
 } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { logout } from "@/actions/logout";
 import { useZustandStore } from "@/components/Provider/ZustandProvider";
+import { routes } from "@/config/app";
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isActive = (href: string) => pathname.includes(href);
+  const underline = isActive(routes.team) ? "always" : "none";
+
   const { profile, clearProfile } = useZustandStore(state => state);
   const isUserAuthorized = Boolean(profile);
 
@@ -43,12 +48,12 @@ export default function Header() {
       {isUserAuthorized && (
         <>
           <NavbarItem>
-            <Link color="foreground" href="#">
+            <Link color="foreground" href={routes.team} underline={underline}>
               Team
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link color="foreground" href="#">
+            <Link color="foreground" href={routes.meetings} underline={underline}>
               Meetings
             </Link>
           </NavbarItem>
@@ -73,8 +78,12 @@ export default function Header() {
                 className="transition-transform"
                 // @FIX: mocking in progress
                 // `@${profile.user.lastName.toLocaleLowerCase()}`
-                description={profile?.team}
-                name={`${profile?.user.firstName} ${profile?.user.lastName}`}
+                description={<span className="hidden md:inline text-sm">{profile?.team}</span>}
+                name={
+                  <span className="hidden md:inline text-sm">
+                    {profile?.user.firstName} {profile?.user.lastName}
+                  </span>
+                }
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">

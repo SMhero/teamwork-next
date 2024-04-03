@@ -1,8 +1,9 @@
 export const routes = {
-  team: "/team",
-  main: "/",
   about: "/about",
   login: "/login",
+  main: "/",
+  meetings: "/meetings",
+  team: "/team",
 };
 
 export const endpoints = {
