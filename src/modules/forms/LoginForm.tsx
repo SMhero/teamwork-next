@@ -44,7 +44,7 @@ export default function LoginForm() {
           // @NOTE: expires after 24 hours
           expires: new Date().getTime() + 60 * 60 * 24 * 1000,
         });
-      }, 3000);
+      });
 
       router.replace(routes.team);
     } catch (error) {

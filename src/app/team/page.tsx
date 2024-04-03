@@ -21,7 +21,7 @@ import TeamList from "@/modules/TeamList/TeamList";
 // }
 
 export default function Team() {
-  const { profile, setProfile, setTeam } = useZustandStore(state => state);
+  const { setProfile, setTeam } = useZustandStore(state => state);
 
   // const profile = await getProfile().then(response => {
   //   setProfile(response);
@@ -34,9 +34,9 @@ export default function Team() {
   }, []);
 
   return (
-    <>
+    <section className="max-w-[1280px]">
       <Search />
       <TeamList />
-    </>
+    </section>
   );
 }

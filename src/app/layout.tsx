@@ -25,14 +25,14 @@ export default function RootLayout({ children }: Props) {
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider>
-          <main className="bg-background h-screen w-full flex flex-col overflow-x-auto relative">
+          <div className="bg-background h-screen w-full overflow-x-auto relative">
             <ZustandProvider>
               <Header />
-              <section className="flex min-h-screen flex-col items-center px-8 py-16 max-w-screen-desktop m-auto w-full">
+              <main className="px-6 py-12 h-[calc(100vh-65px)] max-w-screen-xl m-auto w-full box-border">
                 {children}
-              </section>
+              </main>
             </ZustandProvider>
-          </main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
