@@ -5,14 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import cookies from "js-cookie";
 import { z } from "zod";
 
 import EmailIcon from "@/components/icons/EmailIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
-import { routes } from "@/config/app";
-// import { login } from "@/actions/login";
-// import { useZustandStore } from "@/components/Provider/ZustandProvider";
+import { login } from "@/actions/login";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Field must be a valid email" }),
@@ -26,30 +23,20 @@ export default function LoginForm() {
   const [isVisible, setIsVisible] = useState(false);
 
   const {
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
     handleSubmit,
     register,
-    setError,
     clearErrors,
   } = useForm<FormData>({
+    mode: "onBlur",
     resolver: zodResolver(FormSchema),
   });
 
-  const onSubmit = handleSubmit(async values => {
-    try {
-      // @FIX: mocking
-      // await login({ email: values.email, password: values.password });
-      setTimeout(() => {
-        cookies.set("sessionid", crypto.randomUUID(), {
-          // @NOTE: expires after 24 hours
-          expires: new Date().getTime() + 60 * 60 * 24 * 1000,
-        });
-      });
+  const isDisabled = !isValid || isSubmitting;
 
-      router.replace(routes.team);
-    } catch (error) {
-      console.error(error);
-    }
+  const onSubmit = handleSubmit(async values => {
+    await login({ email: values.email, password: values.password });
+    router.refresh();
   });
 
   return (
@@ -63,7 +50,6 @@ export default function LoginForm() {
       <Input
         {...register("email")}
         errorMessage={errors.password?.message && errors.email?.message}
-        onFocus={() => clearErrors()}
         isInvalid={!!errors.email?.message}
         isRequired
         label="Email"
@@ -75,7 +61,6 @@ export default function LoginForm() {
       <Input
         {...register("password")}
         errorMessage={errors.password?.message && errors.password?.message}
-        onFocus={() => clearErrors()}
         isInvalid={!!errors.password?.message}
         isRequired
         label="Password"
@@ -88,7 +73,14 @@ export default function LoginForm() {
         type={isVisible ? "text" : "password"}
         required
       />
-      <Button className="w-full" color="primary" size="lg" type="submit" isDisabled={!isValid}>
+      <Button
+        className="w-full"
+        color="primary"
+        size="lg"
+        type="submit"
+        isDisabled={isDisabled}
+        isLoading={isSubmitting}
+      >
         Log in
       </Button>
     </form>

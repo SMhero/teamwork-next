@@ -1,38 +1,31 @@
 "use client";
 
-import { createContext, useContext, useRef } from "react";
-import { createStore, type StoreApi } from "zustand/vanilla";
-import { useStoreWithEqualityFn } from "zustand/traditional";
-import { createJSONStorage } from "zustand/middleware";
+import { createContext, useContext, useEffect, useRef } from "react";
+import { type StoreApi, useStore } from "zustand";
 
-import { type ProfileStore, createProfileStore } from "@/store/profile";
-import { createTeamStore, TeamStore } from "@/store/team";
-import { type ScheduleStore, createScheduleStore } from "@/store/schedule";
-import middlewares from "@/store/zustand";
+import { type ProfileStore, type ProfileState, createProfileStore } from "@/store/profile";
 
-export type ZustandStore = ProfileStore & TeamStore & ScheduleStore;
+export type ZustandStore = ProfileStore;
+
+type Props = {
+  children: React.ReactNode;
+  initalValues?: Partial<ProfileState>;
+};
 
 const ZustandContext = createContext<StoreApi<ZustandStore> | null>(null);
 
-export const ZustandProvider = ({ children }: { children: React.ReactNode }) => {
-  const storeRef = useRef<StoreApi<ZustandStore> | null>(null);
+export const ZustandProvider = ({ children, initalValues }: Props) => {
+  const storeRef = useRef<StoreApi<ZustandStore>>();
 
   if (!storeRef.current) {
-    storeRef.current = createStore<ZustandStore>()(
-      middlewares(
-        (...args) => ({
-          ...createProfileStore(...args),
-          ...createTeamStore(...args),
-          ...createScheduleStore(...args),
-        }),
-        {
-          name: "zustand-store",
-          storage: createJSONStorage(() => localStorage),
-          skipHydration: true,
-        }
-      )
-    );
+    storeRef.current = createProfileStore();
   }
+
+  useEffect(() => {
+    if (initalValues) {
+      storeRef.current?.setState(initalValues);
+    }
+  }, [initalValues]);
 
   return <ZustandContext.Provider value={storeRef.current}>{children}</ZustandContext.Provider>;
 };
@@ -44,5 +37,5 @@ export const useZustandStore = <T,>(selector: (state: ZustandStore) => T): T => 
     throw new Error("Missing ZustandContext.Provider in the tree");
   }
 
-  return useStoreWithEqualityFn(store, selector);
+  return useStore(store, selector);
 };

@@ -3,6 +3,7 @@ export type RequestPayload = {
   headers?: {
     [key: string]: string;
   };
+  next?: RequestInit["next"];
   method?: "GET" | "POST" | "PUT" | "DELETE";
   params?: Record<string, unknown>;
   queries?: Record<string, string>;

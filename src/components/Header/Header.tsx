@@ -8,8 +8,10 @@ import {
   DropdownTrigger,
   Link,
   Navbar,
+  NavbarBrand,
   NavbarContent,
   NavbarItem,
+  Skeleton,
   User,
 } from "@nextui-org/react";
 import { useRouter, usePathname } from "next/navigation";
@@ -20,12 +22,10 @@ import { routes } from "@/config/app";
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-
-  const isActive = (href: string) => pathname.includes(href);
-  const underline = isActive(routes.team) ? "always" : "none";
-
   const { profile, clearProfile } = useZustandStore(state => state);
-  const isUserAuthorized = Boolean(profile);
+  const isPrivatePath = pathname !== routes.main;
+
+  const isActive = (href: string) => pathname === href;
 
   const onLogout = () => {
     logout().then(() => clearProfile());
@@ -34,39 +34,43 @@ export default function Header() {
   };
 
   const renderMenuBlock = () => (
-    <NavbarContent>
-      <NavbarItem className="mr-6">
-        <Image
-          className="dark bg-black rounded-md max-w-11"
-          src="./wwe.svg"
-          alt="WWE"
-          width={100}
-          height={24}
-          priority
-        />
-      </NavbarItem>
-      {isUserAuthorized && (
-        <>
-          <NavbarItem>
-            <Link color="foreground" href={routes.team} underline={underline}>
-              Team
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href={routes.meetings} underline={underline}>
-              Meetings
-            </Link>
-          </NavbarItem>
-        </>
-      )}
-    </NavbarContent>
+    <>
+      <NavbarBrand className="mr-6 max-w-[100px]">
+        <span className="text-xl">teamwork.</span>
+      </NavbarBrand>
+      <NavbarContent justify="start">
+        {isPrivatePath && profile ? (
+          <>
+            <NavbarItem>
+              <Link color="foreground" href={routes.team} underline={isActive(routes.team) ? "always" : "none"}>
+                Team
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href={routes.meetings} underline={isActive(routes.meetings) ? "always" : "none"}>
+                Meetings
+              </Link>
+            </NavbarItem>
+          </>
+        ) : (
+          <>
+            <Skeleton className="w-1/5 rounded-lg">
+              <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+            </Skeleton>
+            <Skeleton className="w-1/5 rounded-lg">
+              <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+            </Skeleton>
+          </>
+        )}
+      </NavbarContent>
+    </>
   );
 
   return (
     <Navbar position="static" isBordered maxWidth="xl">
       {renderMenuBlock()}
-      {isUserAuthorized && (
-        <NavbarContent as="div" className="items-center" justify="end">
+      {isPrivatePath && profile ? (
+        <NavbarContent className="items-center" justify="end">
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <User
@@ -76,20 +80,19 @@ export default function Header() {
                   src: profile?.teamlead?.photoUrl,
                 }}
                 className="transition-transform"
-                // @FIX: mocking in progress
-                // `@${profile.user.lastName.toLocaleLowerCase()}`
                 description={<span className="hidden md:inline text-sm">{profile?.team}</span>}
                 name={
                   <span className="hidden md:inline text-sm">
-                    {profile?.user.firstName} {profile?.user.lastName}
+                    {profile.firstName} {profile.lastName}
                   </span>
                 }
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="organization">{profile?.team}</DropdownItem>
-              <DropdownItem key="team_settings">Settings</DropdownItem>
-              <DropdownItem key="settings">Change password</DropdownItem>
+              <DropdownItem key="settings" href={routes.settings}>
+                Settings
+              </DropdownItem>
+              <DropdownItem key="password">Change password</DropdownItem>
               <DropdownItem key="billing">Billing</DropdownItem>
               <DropdownItem key="help_and_feedback" showDivider>
                 Help & Feedback
@@ -103,6 +106,16 @@ export default function Header() {
             </DropdownMenu>
           </Dropdown>
         </NavbarContent>
+      ) : (
+        <div className="max-w-[260px] w-full flex items-center gap-3">
+          <div>
+            <Skeleton className="flex rounded-full w-12 h-12" />
+          </div>
+          <div className="w-full flex flex-col gap-2">
+            <Skeleton className="h-3 w-4/5 rounded-lg" />
+            <Skeleton className="h-3 w-full rounded-lg" />
+          </div>
+        </div>
       )}
     </Navbar>
   );

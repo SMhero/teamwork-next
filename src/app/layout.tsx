@@ -4,6 +4,7 @@ import ThemeProvider from "@/components/Theme";
 import { ZustandProvider } from "@/components/Provider/ZustandProvider";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import { getProfile } from "@/actions/profile";
 
 import "./globals.css";
 
@@ -21,21 +22,23 @@ export const metadata: Metadata = {
   description: "An application to help team leaders guide team members to the right way.",
 };
 
-export default function RootLayout({ children }: Props) {
+export default async function RootLayout({ children }: Props) {
+  const profile = await getProfile();
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider>
-          <div className="bg-background h-screen w-full overflow-x-auto relative">
-            <ZustandProvider>
+        <div className="bg-background h-screen w-full overflow-x-auto relative">
+          <ZustandProvider initalValues={{ profile }}>
+            <ThemeProvider>
               <Header />
               <main className="px-6 py-12 h-[calc(100vh-65px-56px)] max-w-screen-xl m-auto w-full box-border">
                 {children}
               </main>
               <Footer />
-            </ZustandProvider>
-          </div>
-        </ThemeProvider>
+            </ThemeProvider>
+          </ZustandProvider>
+        </div>
       </body>
     </html>
   );
