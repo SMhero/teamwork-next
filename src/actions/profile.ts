@@ -2,7 +2,7 @@
 
 import { endpoints } from "@/config/app";
 import { request } from "@/services/request";
-import { Profile } from "@/store/profile";
+import { Profile } from "@/types/profile";
 import { cookies } from "next/headers";
 
 import { z } from "zod";

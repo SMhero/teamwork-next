@@ -7,7 +7,8 @@ import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { updateProfile } from "@/actions/profile";
-import { useZustandStore } from "@/components/Provider/ZustandProvider";
+import { Profile } from "@/types/profile";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   firstName: z.string().min(1),
@@ -19,7 +20,8 @@ type FormData = z.infer<typeof FormSchema>;
 
 export default function SettingsForm() {
   const router = useRouter();
-  const { profile } = useZustandStore(state => state);
+  const queryClient = useQueryClient();
+  const profile = queryClient.getQueryData<Profile>(["profile"]);
   const [isVisible, setIsVisible] = useState(false);
 
   const {

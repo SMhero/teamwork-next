@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Quantico } from "next/font/google";
+import App from "@/components/App/App";
 import ThemeProvider from "@/components/Theme";
-import { ZustandProvider } from "@/components/Provider/ZustandProvider";
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
-import { getProfile } from "@/actions/profile";
+import QueryProvider from "@/components/Provider/QueryProvider";
 
 import "./globals.css";
 
@@ -23,21 +21,15 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Props) {
-  const profile = await getProfile();
-
   return (
     <html lang="en">
       <body className={inter.className}>
         <div className="bg-background h-screen w-full overflow-x-auto relative">
-          <ZustandProvider initalValues={{ profile }}>
+          <QueryProvider>
             <ThemeProvider>
-              <Header />
-              <main className="px-6 py-12 h-[calc(100vh-65px-56px)] max-w-screen-xl m-auto w-full box-border">
-                {children}
-              </main>
-              <Footer />
+              <App>{children}</App>
             </ThemeProvider>
-          </ZustandProvider>
+          </QueryProvider>
         </div>
       </body>
     </html>

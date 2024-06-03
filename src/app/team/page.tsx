@@ -1,5 +1,4 @@
-import Search from "@/app/team/components/Search";
-import TeamList from "@/modules/TeamList/TeamList";
+import Teammates from "@/app/team/components/Teammates";
 import { getTeammateList } from "@/actions/teammates";
 
 export default async function Team() {
@@ -7,9 +6,7 @@ export default async function Team() {
 
   return (
     <section className="max-w-[1280px]">
-      <Search />
-      TEAM
-      {JSON.stringify(teammateList, null, 2)}
+      <Teammates list={teammateList} />
     </section>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   Dropdown,
   DropdownItem,
@@ -15,20 +14,22 @@ import {
   User,
 } from "@nextui-org/react";
 import { useRouter, usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { logout } from "@/actions/logout";
-import { useZustandStore } from "@/components/Provider/ZustandProvider";
 import { routes } from "@/config/app";
+import { Profile } from "@/types/profile";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const { profile, clearProfile } = useZustandStore(state => state);
-  const isPrivatePath = pathname !== routes.main;
+  const queryClient = useQueryClient();
+  const profile = queryClient.getQueryData<Profile>(["profile"]);
 
   const isActive = (href: string) => pathname === href;
 
   const onLogout = () => {
-    logout().then(() => clearProfile());
+    logout().then(() => queryClient.removeQueries({ queryKey: ["profile"], exact: true }));
 
     router.refresh();
   };
@@ -39,7 +40,7 @@ export default function Header() {
         <span className="text-xl">teamwork.</span>
       </NavbarBrand>
       <NavbarContent justify="start">
-        {isPrivatePath && profile ? (
+        {profile && (
           <>
             <NavbarItem>
               <Link color="foreground" href={routes.team} underline={isActive(routes.team) ? "always" : "none"}>
@@ -52,15 +53,6 @@ export default function Header() {
               </Link>
             </NavbarItem>
           </>
-        ) : (
-          <>
-            <Skeleton className="w-1/5 rounded-lg">
-              <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
-            </Skeleton>
-            <Skeleton className="w-1/5 rounded-lg">
-              <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
-            </Skeleton>
-          </>
         )}
       </NavbarContent>
     </>
@@ -69,7 +61,7 @@ export default function Header() {
   return (
     <Navbar position="static" isBordered maxWidth="xl">
       {renderMenuBlock()}
-      {isPrivatePath && profile ? (
+      {profile && (
         <NavbarContent className="items-center" justify="end">
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -106,16 +98,6 @@ export default function Header() {
             </DropdownMenu>
           </Dropdown>
         </NavbarContent>
-      ) : (
-        <div className="max-w-[260px] w-full flex items-center gap-3">
-          <div>
-            <Skeleton className="flex rounded-full w-12 h-12" />
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <Skeleton className="h-3 w-4/5 rounded-lg" />
-            <Skeleton className="h-3 w-full rounded-lg" />
-          </div>
-        </div>
       )}
     </Navbar>
   );

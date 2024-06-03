@@ -1,6 +1,6 @@
 import { endpoints } from "@/config/app";
 import { request } from "@/services/request";
-import { TeammateList } from "@/store/teammateList";
+import { TeammateList } from "@/types/teammates";
 
 import { cookies } from "next/headers";
 import { z } from "zod";
@@ -31,15 +31,9 @@ const getParsedTeammateList = (data: RawTeammateList): TeammateList =>
 export const getTeammateList = async () => {
   const sessionId = cookies().get("sessionid")?.value;
 
-  if (!sessionId) {
-    return null;
-  }
-
   const rawData = await request<RawTeammateList>(endpoints.teammateList, {
     headers: { Cookie: `sessionid=${sessionId}` },
   });
-
-  console.log("RAAAAAAW", rawData);
 
   TeammateSchema.parse(rawData);
 

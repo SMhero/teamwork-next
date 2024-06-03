@@ -56,7 +56,6 @@ export default function LoginForm() {
         endContent={<EmailIcon className="text-xl text-default-400 pointer-events-none flex-shrink-0" />}
         placeholder="email@example.com"
         type="email"
-        required
       />
       <Input
         {...register("password")}
@@ -71,7 +70,6 @@ export default function LoginForm() {
         }
         placeholder="Your tricky password"
         type={isVisible ? "text" : "password"}
-        required
       />
       <Button
         className="w-full"
