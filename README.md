@@ -7,7 +7,6 @@ Teamwork is an application to help team leaders guide team members to the right 
 - `Next.js`
 - `TypeScript`
 - `Tailwind`
-- `Zustand`
 
 ## Commands
 

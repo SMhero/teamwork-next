@@ -1,52 +1,61 @@
 "use client";
 
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { z } from "zod";
-import { updateProfile } from "@/actions/profile";
+import { updateProfile } from "@/actions/profile/update";
 import { Profile } from "@/types/profile";
-import { useQueryClient } from "@tanstack/react-query";
+
+const TIMEZONES_LIST = Intl.supportedValuesOf("timeZone");
 
 const FormSchema = z.object({
+  defaultMeetingDuration: z.number().min(10),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  "team.name": z.string().min(4),
+  team: z.string().min(4),
+  timezone: z.string().refine(tz => TIMEZONES_LIST.includes(tz), {
+    message: "Invalid timezone",
+  }),
 });
 
 type FormData = z.infer<typeof FormSchema>;
 
-export default function SettingsForm() {
+type Props = {
+  profile: Profile;
+};
+
+export default function SettingsForm({ profile }: Props) {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const profile = queryClient.getQueryData<Profile>(["profile"]);
-  const [isVisible, setIsVisible] = useState(false);
+
+  const defaultValues = { ...profile };
 
   const {
-    formState: { errors, isValid },
+    control,
+    formState: { errors, isValid, isDirty, isSubmitting },
     handleSubmit,
     register,
     clearErrors,
+    reset,
   } = useForm<FormData>({
-    defaultValues: {
-      firstName: profile?.firstName,
-      lastName: profile?.lastName,
-      "team.name": profile?.team,
-    },
     mode: "onBlur",
     resolver: zodResolver(FormSchema),
+    defaultValues,
   });
 
   const onSubmit = handleSubmit(async values => {
     try {
-      updateProfile();
+      await updateProfile(profile, values);
+      // @NOTE: to make form persisted
+      reset(values);
+      router.refresh();
     } catch (error) {
       console.error(error);
     }
   });
 
+  const isDisabled = !isDirty || !isValid;
   return (
     <form
       className="flex flex-col justify-center gap-4"
@@ -56,33 +65,70 @@ export default function SettingsForm() {
       noValidate
     >
       <Input
-        {...register("firstName")}
         errorMessage={errors.firstName?.message && errors.firstName?.message}
         isInvalid={!!errors.firstName?.message}
-        isRequired
         label="First name"
         placeholder="John"
-        required
+        defaultValue={defaultValues.firstName}
+        {...register("firstName", { required: true })}
       />
       <Input
-        {...register("lastName")}
         errorMessage={errors.lastName?.message && errors.lastName?.message}
         isInvalid={!!errors.lastName?.message}
-        isRequired
         label="Last name"
         placeholder="Doe"
-        required
+        defaultValue={defaultValues.lastName}
+        {...register("lastName", { required: true })}
       />
       <Input
-        {...register("team.name")}
-        errorMessage={errors["team.name"]?.message && errors["team.name"]?.message}
-        isInvalid={!!errors["team.name"]?.message}
-        isRequired
+        errorMessage={errors.team?.message && errors.team?.message}
+        isInvalid={!!errors.team?.message}
         label="Team name"
         placeholder="Ghostbusters"
-        required
+        defaultValue={defaultValues.team}
+        {...register("team", { required: true })}
       />
-      <Button className="w-full" color="primary" size="lg" type="submit" isDisabled={!isValid}>
+      <Controller
+        name="timezone"
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Select
+            label="Timezone"
+            placeholder="Europe/Rostov-on-Don"
+            onBlur={onBlur}
+            // @NOTE: this is a strange approach to get hook from update - should be investigated
+            onSelectionChange={selection => {
+              onChange(Array.from(selection)[0]);
+            }}
+            errorMessage={errors.timezone && "Selecting timezone is required"}
+            isInvalid={!!errors.timezone?.message}
+            selectedKeys={value ? [value] : []}
+          >
+            {TIMEZONES_LIST.map(timezone => (
+              <SelectItem key={timezone} textValue={timezone}>
+                {timezone}
+              </SelectItem>
+            ))}
+          </Select>
+        )}
+      />
+      <Input
+        errorMessage={errors.defaultMeetingDuration?.message && errors.defaultMeetingDuration?.message}
+        isInvalid={!!errors.defaultMeetingDuration?.message}
+        label="Meeting duration (minutes)"
+        placeholder="30"
+        defaultValue={String(defaultValues.defaultMeetingDuration)}
+        {...register("defaultMeetingDuration", { valueAsNumber: true, required: true })}
+      />
+      <Button
+        className="w-full"
+        color="primary"
+        size="lg"
+        type="submit"
+        isDisabled={isDisabled}
+        isLoading={isSubmitting}
+      >
         Update
       </Button>
     </form>

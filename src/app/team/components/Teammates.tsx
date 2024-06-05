@@ -5,16 +5,14 @@ import { Card, CardBody, CardFooter, Image, Skeleton } from "@nextui-org/react";
 
 import Search from "@/app/team/components/Search";
 import { TeammateList } from "@/types/teammates";
-import { useQueryClient } from "@tanstack/react-query";
 import { Profile } from "@/types/profile";
 
 type Props = {
   list: TeammateList;
+  profile: Profile | null;
 };
 
-export default function Teammates({ list }: Props) {
-  const queryClient = useQueryClient();
-  const profile = queryClient.getQueryData<Profile>(["profile"]);
+export default function Teammates({ list, profile }: Props) {
   const [teammateList, setTeammateList] = useState<TeammateList>(list);
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +64,7 @@ export default function Teammates({ list }: Props) {
           ))}
         </div>
       ) : (
-        <div className="text-2xl text-center">No members found...</div>
+        <div className="text-xl text-center">No members found...</div>
       )}
     </div>
   );

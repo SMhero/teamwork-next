@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Quantico } from "next/font/google";
-import App from "@/components/App/App";
 import ThemeProvider from "@/components/Theme";
-import QueryProvider from "@/components/Provider/QueryProvider";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import { getProfile } from "@/actions/profile/get";
 
 import "./globals.css";
 
@@ -25,11 +26,13 @@ export default async function RootLayout({ children }: Props) {
     <html lang="en">
       <body className={inter.className}>
         <div className="bg-background h-screen w-full overflow-x-auto relative">
-          <QueryProvider>
-            <ThemeProvider>
-              <App>{children}</App>
-            </ThemeProvider>
-          </QueryProvider>
+          <ThemeProvider>
+            <Header profile={await getProfile()} />
+            <main className="px-6 py-12 h-[calc(100vh-65px-56px)] max-w-screen-xl m-auto w-full box-border">
+              {children}
+            </main>
+            <Footer />
+          </ThemeProvider>
         </div>
       </body>
     </html>
