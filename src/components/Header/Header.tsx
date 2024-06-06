@@ -57,7 +57,6 @@ export default function Header({ profile }: Props) {
   return (
     <Navbar position="static" isBordered maxWidth="xl">
       {renderMenuBlock()}
-
       <NavbarContent className="items-center" justify="end">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>

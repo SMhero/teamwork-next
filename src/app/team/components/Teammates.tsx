@@ -1,11 +1,13 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { Card, CardBody, CardFooter, Image, Skeleton } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, Image, Skeleton, useDisclosure } from "@nextui-org/react";
 
 import Search from "@/app/team/components/Search";
 import { TeammateList } from "@/types/teammates";
 import { Profile } from "@/types/profile";
+import ControlPanel from "@/components/ControlPanel/ControlPanel";
+import TeammateModal from "@/app/team/components/TeammateModal";
 
 type Props = {
   list: TeammateList;
@@ -13,11 +15,13 @@ type Props = {
 };
 
 export default function Teammates({ list, profile }: Props) {
-  const [teammateList, setTeammateList] = useState<TeammateList>(list);
+  const [teammateList, setTeammateList] = useState(list);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
 
+    // @FIX: filtration should be on the backend side
     setTeammateList(() => {
       if (value) {
         return teammateList.filter(member => member.name.includes(value) || member.position.includes(value));
@@ -34,7 +38,12 @@ export default function Teammates({ list, profile }: Props) {
   return (
     <div className="w-full">
       <Search onChange={onChange} onClear={onClear} />
-      <h3 className="text-center m-6">{profile?.team}</h3>
+      <ControlPanel>
+        <h3>{profile?.team}</h3>
+        <Button color="primary" onClick={onOpen}>
+          + Add teammate
+        </Button>
+      </ControlPanel>
       {!!teammateList.length ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {teammateList.map(member => (
@@ -66,6 +75,7 @@ export default function Teammates({ list, profile }: Props) {
       ) : (
         <div className="text-xl text-center">No members found...</div>
       )}
+      <TeammateModal isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 }

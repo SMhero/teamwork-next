@@ -55,7 +55,7 @@ export default function SettingsForm({ profile }: Props) {
     }
   });
 
-  const isDisabled = !isDirty || !isValid;
+  const isDisabled = !isDirty || !isValid || isSubmitting;
   return (
     <form
       className="flex flex-col justify-center gap-4"
@@ -66,6 +66,7 @@ export default function SettingsForm({ profile }: Props) {
     >
       <Input
         errorMessage={errors.firstName?.message && errors.firstName?.message}
+        isRequired
         isInvalid={!!errors.firstName?.message}
         label="First name"
         placeholder="John"
@@ -74,6 +75,7 @@ export default function SettingsForm({ profile }: Props) {
       />
       <Input
         errorMessage={errors.lastName?.message && errors.lastName?.message}
+        isRequired
         isInvalid={!!errors.lastName?.message}
         label="Last name"
         placeholder="Doe"
@@ -82,6 +84,7 @@ export default function SettingsForm({ profile }: Props) {
       />
       <Input
         errorMessage={errors.team?.message && errors.team?.message}
+        isRequired
         isInvalid={!!errors.team?.message}
         label="Team name"
         placeholder="Ghostbusters"
