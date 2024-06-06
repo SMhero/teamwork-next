@@ -6,7 +6,8 @@ import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader } from "@nex
 import { useForm } from "react-hook-form";
 
 const FormSchema = z.object({
-  name: z.string().min(1),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
   position: z.string().min(10),
 });
 
@@ -27,6 +28,11 @@ export default function TeammateModal({ isOpen, onOpenChange }: Props) {
     resolver: zodResolver(FormSchema),
   });
 
+  const onOpen = () => {
+    reset();
+    onOpenChange();
+  };
+
   const onSubmit = (onCloseCb: () => void) =>
     handleSubmit(values => {
       console.log(values);
@@ -36,7 +42,7 @@ export default function TeammateModal({ isOpen, onOpenChange }: Props) {
 
   const isDisabled = !isDirty || !isValid || isSubmitting;
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={onOpen}>
       <ModalContent>
         {onClose => (
           <>
@@ -44,12 +50,20 @@ export default function TeammateModal({ isOpen, onOpenChange }: Props) {
             <ModalBody>
               <form className="flex flex-col justify-center gap-4" onSubmit={() => onSubmit(onClose)}>
                 <Input
-                  errorMessage={errors.name?.message && errors.name?.message}
-                  isInvalid={!!errors.name?.message}
+                  errorMessage={errors.firstName?.message && errors.firstName?.message}
+                  isInvalid={!!errors.firstName?.message}
                   isRequired
-                  label="Name"
-                  placeholder="Vinogradov Ivan"
-                  {...register("name", { required: true })}
+                  label="First name"
+                  placeholder="Ivan"
+                  {...register("firstName", { required: true })}
+                />
+                <Input
+                  errorMessage={errors.lastName?.message && errors.lastName?.message}
+                  isInvalid={!!errors.lastName?.message}
+                  isRequired
+                  label="Last name"
+                  placeholder="Vinogradov "
+                  {...register("lastName", { required: true })}
                 />
                 <Input
                   errorMessage={errors.position?.message && errors.position?.message}

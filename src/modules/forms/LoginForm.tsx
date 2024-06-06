@@ -32,12 +32,12 @@ export default function LoginForm() {
     resolver: zodResolver(FormSchema),
   });
 
-  const isDisabled = !isValid || isSubmitting;
-
   const onSubmit = handleSubmit(async values => {
     await login({ email: values.email, password: values.password });
     router.refresh();
   });
+
+  const isDisabled = !isValid || isSubmitting;
 
   return (
     <form

@@ -16,10 +16,10 @@ const getUrlWithQueries = (url: string, queries: RequestPayload["queries"] = {})
   return `${url}?${decodeURIComponent(search)}`;
 };
 
-const getUrlWithParams = (url: string, params: RequestPayload["params"] = {}) => {
-  const newUrl = url;
+export const getUrlWithParams = (url: string, params: RequestPayload["params"] = {}) => {
+  let newUrl = url;
 
-  Object.keys(params).forEach(key => (url = url.replace(`{{${key}}}`, String(params[key]))));
+  Object.keys(params).forEach(key => (newUrl = newUrl.replace(`{{${key}}}`, String(params[key]))));
   return newUrl;
 };
 

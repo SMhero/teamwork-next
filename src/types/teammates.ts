@@ -7,4 +7,4 @@ export type Teammate = {
   teamName: string;
 };
 
-export type TeammateList = Teammate[];
+export type TeammatesList = Teammate[];

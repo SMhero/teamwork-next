@@ -1,30 +1,32 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
+import Link from "next/link";
 import { Button, Card, CardBody, CardFooter, Image, Skeleton, useDisclosure } from "@nextui-org/react";
 
 import Search from "@/app/team/components/Search";
-import { TeammateList } from "@/types/teammates";
-import { Profile } from "@/types/profile";
 import ControlPanel from "@/components/ControlPanel/ControlPanel";
 import TeammateModal from "@/app/team/components/TeammateModal";
+import { TeammatesList } from "@/types/teammates";
+import { Profile } from "@/types/profile";
+import { routes } from "@/config/app";
 
 type Props = {
-  list: TeammateList;
+  list: TeammatesList;
   profile: Profile | null;
 };
 
 export default function Teammates({ list, profile }: Props) {
-  const [teammateList, setTeammateList] = useState(list);
+  const [teammatesList, setTeammatesList] = useState(list);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
 
     // @FIX: filtration should be on the backend side
-    setTeammateList(() => {
+    setTeammatesList(() => {
       if (value) {
-        return teammateList.filter(member => member.name.includes(value) || member.position.includes(value));
+        return teammatesList.filter(member => member.name.includes(value) || member.position.includes(value));
       }
 
       return list;
@@ -32,7 +34,7 @@ export default function Teammates({ list, profile }: Props) {
   };
 
   const onClear = () => {
-    setTeammateList(list);
+    setTeammatesList(list);
   };
 
   return (
@@ -44,32 +46,37 @@ export default function Teammates({ list, profile }: Props) {
           + Add teammate
         </Button>
       </ControlPanel>
-      {!!teammateList.length ? (
+      {!!teammatesList.length ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {teammateList.map(member => (
-            <Card key={member.id} shadow="sm" isPressable disableRipple>
-              <CardBody className="overflow-visible p-0">
-                {member.photo ? (
-                  <Image className="m-full" src={member.photo} alt={member.name} shadow="sm" radius="lg" width="100%" />
-                ) : (
-                  <Skeleton className="bg-gradient-to-r from-gray to-gray-300 w-full h-48" isLoaded>
-                    <div className="h-52 bg-slate-400" />
-                  </Skeleton>
-                )}
-              </CardBody>
-              <CardFooter className="text-small justify-between">
-                {member.position ? (
-                  <div className="w-full">
-                    <p className="text-center ">{member.name}</p>
-                    <span className="text-center italic text-xs">{member.position}</span>
-                  </div>
-                ) : (
-                  <Skeleton className="bg-gradient-to-r from-gray to-gray-300 w-full h-4" isLoaded>
-                    <div className="h-52 bg-slate-400"></div>
-                  </Skeleton>
-                )}
-              </CardFooter>
-            </Card>
+          {teammatesList.map(member => (
+            <Link key={member.id} href={`${routes.teammate}/${member.id}`}>
+              <Card shadow="sm" isPressable disableRipple>
+                <CardBody className="overflow-visible p-0">
+                  <Image
+                    className="m-full h-48"
+                    // @FIX: change when photos will be not corrupted
+                    // src={member.photo}
+                    src="./dunder_mifflin.svg"
+                    alt={member.name}
+                    shadow="sm"
+                    radius="lg"
+                    width="100%"
+                  />
+                </CardBody>
+                <CardFooter className="text-small justify-between">
+                  {member.position ? (
+                    <div className="w-full">
+                      <p className="text-center ">{member.name}</p>
+                      <span className="text-center italic text-xs">{member.position}</span>
+                    </div>
+                  ) : (
+                    <Skeleton className="bg-gradient-to-r from-gray to-gray-300 w-full h-4" isLoaded>
+                      <div className="h-52 bg-slate-400"></div>
+                    </Skeleton>
+                  )}
+                </CardFooter>
+              </Card>
+            </Link>
           ))}
         </div>
       ) : (

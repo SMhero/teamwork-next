@@ -5,11 +5,13 @@ export const routes = {
   meetings: "/meetings",
   settings: "/settings",
   team: "/team",
+  teammate: "/team/teammate",
 };
 
 export const endpoints = {
   login: "/v2/login/",
   logout: "/v2/logout/",
   profile: "/v2/myteam/profile/",
-  teammateList: "/v2/myteam/teammate/list/",
+  teammate: "/v2/myteam/teammate/{{id}}/",
+  teammatesList: "/v2/myteam/teammate/list/",
 };

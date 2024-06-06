@@ -26,7 +26,7 @@ export default function Header({ profile }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => pathname.includes(href);
 
   const onLogout = () => {
     logout();
@@ -37,7 +37,9 @@ export default function Header({ profile }: Props) {
   const renderMenuBlock = () => (
     <>
       <NavbarBrand className="mr-6 max-w-[100px]">
-        <span className="text-xl">teamwork.</span>
+        <Link className="text-xl" href="/" color="foreground">
+          teamwork.
+        </Link>
       </NavbarBrand>
       <NavbarContent justify="start">
         <NavbarItem>
@@ -65,6 +67,7 @@ export default function Header({ profile }: Props) {
               avatarProps={{
                 isBordered: true,
                 src: profile?.photoUrl,
+                radius: "sm",
               }}
               className="transition-transform"
               description={<span className="hidden md:inline text-sm">{profile?.team}</span>}
